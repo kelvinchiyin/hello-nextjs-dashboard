@@ -5,12 +5,21 @@ import {
   //CustomersTableType,
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
+import { fetchFilteredCustomers,  } from '@/app/lib/data';
+export default async function CustomersTable(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
+}
 
-export default async function CustomersTable({
-  customers,
-}: {
-  customers: FormattedCustomersTable[];
-}) {
+) {
+  const searchParams = await props.searchParams;
+  const searchQuery = searchParams?.query || '';
+  // const currentPage = Number(searchParams?.page) || 1;
+  // const totalPages = await fetchInvoicesPages(query);
+
+  const customers: FormattedCustomersTable[] = await fetchFilteredCustomers(searchQuery);
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
@@ -84,7 +93,7 @@ export default async function CustomersTable({
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
-                  {customers.map((customer) => (
+                  {customers?.map((customer) => (
                     <tr key={customer.id} className="group">
                       <td className="whitespace-nowrap bg-white py-5 pl-4 pr-3 text-sm text-black group-first-of-type:rounded-md group-last-of-type:rounded-md sm:pl-6">
                         <div className="flex items-center gap-3">
