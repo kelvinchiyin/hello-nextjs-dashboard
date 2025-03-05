@@ -5,7 +5,8 @@ import {
   //CustomersTableType,
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
-import { fetchFilteredCustomers,  } from '@/app/lib/data';
+import { fetchFilteredCustomers, fetchCustomersPages } from '@/app/lib/data';
+import Pagination from '@/app/ui/invoices/pagination';
 export default async function CustomersTable(props: {
   searchParams?: Promise<{
     query?: string;
@@ -16,10 +17,11 @@ export default async function CustomersTable(props: {
 ) {
   const searchParams = await props.searchParams;
   const searchQuery = searchParams?.query || '';
-  // const currentPage = Number(searchParams?.page) || 1;
-  // const totalPages = await fetchInvoicesPages(query);
+  const currentPage = Number(searchParams?.page) || 1;
+  const totalPages = await fetchCustomersPages(searchQuery);
 
-  const customers: FormattedCustomersTable[] = await fetchFilteredCustomers(searchQuery);
+
+  const customers: FormattedCustomersTable[] = await fetchFilteredCustomers(searchQuery, currentPage);
   return (
     <div className="w-full">
       <h1 className={`${lusitana.className} mb-8 text-xl md:text-2xl`}>
@@ -123,6 +125,10 @@ export default async function CustomersTable(props: {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            <div className="mt-5 flex w-full justify-center">
+              <Pagination totalPages={totalPages} />
             </div>
           </div>
         </div>
